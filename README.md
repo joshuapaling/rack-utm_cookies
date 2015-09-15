@@ -18,7 +18,10 @@ Or install it yourself as:
 
     $ gem install rack-utm_cookies
 
-### Use with Rails 4
+
+## Usage
+
+*Use with Rails 4*
 
 Add `Rack::Utm` as a rack middleware:
 
@@ -28,10 +31,6 @@ Add `Rack::Utm` as a rack middleware:
       config.middleware.use Rack::Utm
       #...
     end
-
-## Usage
-
-TODO: Write usage instructions here
 
 ## Development
 
