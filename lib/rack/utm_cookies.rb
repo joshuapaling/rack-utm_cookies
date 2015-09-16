@@ -40,10 +40,15 @@ module Rack
 
     def utm_cookies_to_set(req)
       utm_cookies = {}
-      if req.params["utm_source"] && req.params["utm_medium"]
-        utm_cookies['utm_source'] = req.params["utm_source"]
-        utm_cookies['utm_medium'] = req.params["utm_medium"]
+      # these are minimum required utm params
+      if !(req.params["utm_source"] && req.params["utm_medium"] && req.params["utm_campaign"])
+        return utm_cookies
       end
+
+      utm_cookies['utm_source'] = req.params["utm_source"]
+      utm_cookies['utm_medium'] = req.params["utm_medium"]
+      utm_cookies['utm_campaign'] = req.params["utm_campaign"]
+
       return utm_cookies
     end
 

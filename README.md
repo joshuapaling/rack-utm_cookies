@@ -28,7 +28,9 @@ Add `Rack::Utm` as a rack middleware:
     # config/application.rb
     class Application < Rails::Application
       #...
-      config.middleware.use Rack::Utm
+      # if you want cookies set for the current request passed into your rails app,
+      # you'll need to include this middleware before "ActionDispatch::Cookies"
+      config.middleware.insert_before "ActionDispatch::Cookies", Rack::UtmCookies
       #...
     end
 
