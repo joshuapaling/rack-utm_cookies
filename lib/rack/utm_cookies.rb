@@ -45,9 +45,9 @@ module Rack
         return utm_cookies
       end
 
-      utm_cookies['utm_source'] = req.params["utm_source"]
-      utm_cookies['utm_medium'] = req.params["utm_medium"]
-      utm_cookies['utm_campaign'] = req.params["utm_campaign"]
+      utm_cookies = req.params.keep_if { |key|
+        %{utm_source utm_medium utm_campaign utm_content utm_term}.include? key
+      }
 
       return utm_cookies
     end

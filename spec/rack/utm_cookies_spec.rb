@@ -28,6 +28,7 @@ describe Rack::UtmCookies do
   let(:nested_rack_app) { MockRackApp.new }
   let(:app) { Rack::UtmCookies.new(nested_rack_app) }
   let(:request) { Rack::MockRequest.new(app) }
+  let(:endpoint) { '/?utm_source=the_source&utm_medium=the_medium&utm_campaign=the_campaign&utm_content=the_content&utm_term=the_term' }
 
   def cookies
     rack_mock_session.cookie_jar.instance_variable_get(:@cookies)
@@ -38,7 +39,7 @@ describe Rack::UtmCookies do
   end
 
   it 'tacks on UTM cookies before passing response down the middleware stack' do
-    get('/?utm_source=the_source&utm_medium=the_medium&utm_campaign=the_campaign')
+    get(endpoint)
     # we DON'T want to just check cookies from the response like other methods - we
     # explicitly want the cookies in the request that gets passed on to our NESTED
     # rack app
@@ -46,6 +47,8 @@ describe Rack::UtmCookies do
     expect(req.cookies['utm_source']).to eq('the_source')
     expect(req.cookies['utm_medium']).to eq('the_medium')
     expect(req.cookies['utm_campaign']).to eq('the_campaign')
+    expect(req.cookies['utm_content']).to eq('the_content')
+    expect(req.cookies['utm_term']).to eq('the_term')
   end
 
   it "does nothing if the minimum required params of utm_source, utm_medium and utm_campaign aren't present" do
@@ -54,10 +57,12 @@ describe Rack::UtmCookies do
   end
 
   it 'sets cookies for the current subdomain in the response' do
-    get('/?utm_source=the_source&utm_medium=the_medium&utm_campaign=the_campaign')
+    get(endpoint)
     expect(rack_mock_session.cookie_jar["utm_source"]).to eq('the_source')
     expect(rack_mock_session.cookie_jar["utm_medium"]).to eq('the_medium')
     expect(rack_mock_session.cookie_jar["utm_campaign"]).to eq('the_campaign')
+    expect(rack_mock_session.cookie_jar["utm_content"]).to eq('the_content')
+    expect(rack_mock_session.cookie_jar["utm_term"]).to eq('the_term')
 
     cookies.each do |c|
       expect(c.domain).to eq('www.example.com')
@@ -70,8 +75,8 @@ describe Rack::UtmCookies do
       }) }
 
     it 'sets cookies to the domain passed in' do
-      get('/?utm_source=the_source&utm_medium=the_medium&utm_campaign=the_campaign')
-      expect(cookies.count).to eq(3)
+      get(endpoint)
+      expect(cookies.count).to eq(5)
       cookies.each do |c|
         expect(c.domain).to eq('.example.com')
       end
