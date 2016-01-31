@@ -40,10 +40,7 @@ module Rack
 
     def utm_cookies_to_set(req)
       utm_cookies = {}
-      # these are minimum required utm params
-      if !(req.params["utm_source"] && req.params["utm_medium"] && req.params["utm_campaign"])
-        return utm_cookies
-      end
+      return utm_cookies unless valid_request(req)
 
       utm_cookies = req.params.keep_if { |key|
         %{utm_source utm_medium utm_campaign utm_content utm_term}.include? key
@@ -52,5 +49,9 @@ module Rack
       return utm_cookies
     end
 
+    # these are minimum required utm params
+    def valid_request(req)
+      (req.params["utm_source"] && req.params["utm_medium"] && req.params["utm_campaign"])
+    end
   end
 end
